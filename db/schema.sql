@@ -3,12 +3,12 @@ CREATE DATABASE company_db;
 
 USE company_db;
 
-CREATE TABLE department (
+CREATE TABLE departments (
   department_id INT NOT NULL PRIMARY KEY,
   department_name VARCHAR(30) NOT NULL
 );
 
-CREATE TABLE role (
+CREATE TABLE roles (
     role_id INT NOT NULL PRIMARY KEY,
     title VARCHAR(30) NOT NULL,
     salary DECIMAL NOT NULL,
@@ -17,7 +17,7 @@ CREATE TABLE role (
     REFERENCES department(department_id)
 );
 
-CREATE TABLE employee (
+CREATE TABLE employees (
     employee_id INT NOT NULL PRIMARY KEY,
     first_name VARCHAR(30) NOT NULL,
     last_name VARCHAR(30) NOT NULL,
