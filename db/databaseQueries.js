@@ -25,6 +25,7 @@ function viewAllEmployees(callback) {
   });
 }
 
+
 function addDepartment(callback) {
     inquirer
      .prompt([
@@ -37,43 +38,70 @@ function addDepartment(callback) {
       const departmentName = answer.departmentAdd;
       db.query('INSERT INTO departments (department_name) VALUES (?)', [departmentName], (err, result) => {
         if (err) throw err;
-        console.log('Department added successfully');
+        console.log(`Added ${departmentName} to the database.`);
         callback();
       });
     });
 }
 
 function addRole(callback) {
+
+  db.query('SELECT * FROM departments', (err, results) => {
+    if (err) throw err;
+
+    const departmentNames = results.map(department => department.department_name);
+
     inquirer
-     .prompt([
-       {
-         name: 'title',
-         message: 'Enter the name of the new role:',
-         },
-       {
-         name: 'salary',
-         message: 'Enter the salary of the new role:',
-         },
-       {
-         name: 'departmentId',
-         message: 'Enter the department ID of the new role:'
+      .prompt([
+        {
+          name: 'title',
+          message: 'Enter the name of the new role:',
+        },
+        {
+          name: 'salary',
+          message: 'Enter the salary of the new role:',
+        },
+        {
+          name: 'departmentName',
+          type: 'list',
+          message: 'Which department does the role belong to?',
+          choices: departmentNames,
         }
       ])
-     .then(answer => {
-         const title = answer.title;
-         const salary = answer.salary;
-         const departmentId = answer.departmentId;
-         db.query('INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?)',
-             [title, salary, departmentId],
-             (err, result) => {
+      .then(answer => {
+        const title = answer.title;
+        const salary = answer.salary;
+        const departmentName = answer.departmentName;
+       
+        db.query('SELECT department_id FROM departments WHERE department_name = ?',
+          [departmentName], (err, result) => {
+            if (err) throw err;
+            const departmentId = result[0].department_id;
+         
+            db.query('INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?)',
+              [title, salary, departmentId],
+              (err, result) => {
                 if (err) throw err;
-                console.log('Role added successfully');
+                console.log(`${title} added to roles.`);
                 callback();
+              });
+          });
       });
-    });
+  });
 }
 
 function addEmployee(callback) {
+
+  db.query('SELECT * FROM employees WHERE manager_id IS NULL', (err, results) => {
+    if (err) throw err;
+
+    const managerNames = results
+      .filter(employee => employee.manager_id == null)
+      .map(employee => ({
+        name: `${employee.first_name} ${employee.last_name}`,
+        value: employee.employee_id
+      }));
+
     inquirer
      .prompt([
        {
@@ -89,8 +117,10 @@ function addEmployee(callback) {
          message: 'Enter ID number of the employees role:'
          },
        {
-         name: 'managerId',
-         message: 'Enter the ID of the manager for the new employee if applicable:',
+         name: 'managerName',
+         type: 'list',
+         message: 'If applicable, who is the manager of this employee?',
+         choices: managerNames,
          default: null
          }
       ])
@@ -98,7 +128,7 @@ function addEmployee(callback) {
          const first = answer.firstName;
          const last = answer.lastName;
          const role = answer.roleId;
-         const manager = answer.managerId;
+         const manager = answer.managerName;
 
         const parsedManagerId = manager === '' ? null : manager;
 
@@ -109,7 +139,8 @@ function addEmployee(callback) {
                 console.log('Employee added successfully');
                 callback();
       });
-    });
+     });
+     })
 }
 
 function updateEmployeeRole(callback) {
