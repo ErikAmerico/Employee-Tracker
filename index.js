@@ -1,6 +1,6 @@
 const inquirer = require('inquirer');
 //const db = require('./db/databaseConnection')
-const { viewAllDepartments, viewAllRoles, viewAllEmployees } = require('./db/databaseQueries');
+const { viewAllDepartments, viewAllRoles, viewAllEmployees, addDepartment, addRole, addEmployee, updateEmployeeRole } = require('./db/databaseQueries');
 
 
 const menu = () => {
@@ -26,16 +26,16 @@ const menu = () => {
           viewAllEmployees(menu);
           break;
         case 'add a department':
-
+          addDepartment(menu);
           break;
         case 'add a role':
- 
+          addRole(menu);
           break;
         case 'add an employee':
-
+          addEmployee(menu);
           break;
         case 'update an employee role':
-
+          updateEmployeeRole(menu);
           break;
         default:
   
