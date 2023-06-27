@@ -10,18 +10,43 @@ function viewAllDepartments(callback) {
 }
 
 function viewAllRoles(callback) {
-  db.query('SELECT * FROM roles', (err, results) => {
+  const sql = `
+  SELECT
+    roles.title AS JobTitle,
+    roles.role_id AS RoleID,
+    departments.department_name AS Department,
+    roles.salary AS Salary
+  FROM roles
+  INNER JOIN departments ON roles.department_id = departments.department_id
+`;
+  
+  db.query(sql, (err, results) => {
     if (err) throw err;
-      console.table(results);
-      callback();
+    console.table(results);
+    callback();
   });
 }
 
 function viewAllEmployees(callback) {
-  db.query('SELECT * FROM employees', (err, results) => {
+const sql = `
+  SELECT
+    employees.employee_id,
+    CONCAT(employees.first_name, ' ', employees.last_name) AS EmployeeName,
+    roles.title AS Role,
+    departments.department_name AS Department,
+    roles.salary AS Salary,
+    CONCAT(managers.first_name, ' ', managers.last_name) AS Manager
+  FROM employees
+  INNER JOIN roles ON employees.role_id = roles.role_id
+  INNER JOIN departments ON roles.department_id = departments.department_id
+  LEFT JOIN employees AS managers ON employees.manager_id = managers.employee_id
+`;
+
+
+  db.query(sql, (err, results) => {
     if (err) throw err;
-      console.table(results);
-      callback();
+    console.table(results);
+    callback();
   });
 }
 
