@@ -1,5 +1,4 @@
 const inquirer = require('inquirer');
-//const db = require('./db/databaseConnection')
 const { viewAllDepartments, viewAllRoles, viewAllEmployees, addDepartment, addRole, addEmployee, updateEmployeeRole } = require('./db/databaseQueries');
 
 
@@ -10,31 +9,31 @@ const menu = () => {
         type: 'list',
         name: 'options',
         message: 'Select what you would like to do:',
-        choices: ['view all departments', 'view all roles', 'view all employees', 'add a department', 'add a role', 'add an employee', 'update an employee role'],
+        choices: ['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role', 'Add an employee', 'Update an employee role'],
         pageSize: 10,
       },
     ])
     .then(answer => {
       switch (answer.options) {
-        case 'view all departments':
+        case 'View all departments':
           viewAllDepartments(menu);
           break;
-        case 'view all roles':
+        case 'View all roles':
           viewAllRoles(menu);
           break;
-        case 'view all employees':
+        case 'View all employees':
           viewAllEmployees(menu);
           break;
-        case 'add a department':
+        case 'Add a department':
           addDepartment(menu);
           break;
-        case 'add a role':
+        case 'Add a role':
           addRole(menu);
           break;
-        case 'add an employee':
+        case 'Add an employee':
           addEmployee(menu);
           break;
-        case 'update an employee role':
+        case 'Update an employee role':
           updateEmployeeRole(menu);
           break;
         default:
@@ -45,6 +44,4 @@ const menu = () => {
 };
 
 menu();
-
-//module.exports = menu();
 

@@ -139,10 +139,6 @@ function updateEmployeeRole(callback) {
 }
 
 
-
-
-
-
 module.exports = {
     viewAllDepartments,
     viewAllRoles,
