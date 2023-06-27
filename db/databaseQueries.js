@@ -92,67 +92,101 @@ function addRole(callback) {
 
 function addEmployee(callback) {
 
-  db.query('SELECT * FROM employees WHERE manager_id IS NULL', (err, results) => {
+  db.query('SELECT * FROM roles', (err, roleResults) => {
     if (err) throw err;
 
-    const managerNames = results
-      .filter(employee => employee.manager_id == null)
+    const roles = roleResults.map(role => ({
+      name: role.title,
+      value: role.role_id
+    }));
+
+    db.query('SELECT * FROM employees WHERE manager_id IS NULL', (err, results) => {
+      if (err) throw err;
+
+      const managerNames = results
+        .filter(employee => employee.manager_id == null)
+        .map(employee => ({
+          name: `${employee.first_name} ${employee.last_name}`,
+          value: employee.employee_id
+        }));
+      
+      managerNames.unshift({ name: 'NOT APPLICABLE', value: null });
+
+      inquirer
+        .prompt([
+          {
+            name: 'firstName',
+            message: 'Enter employees first name:',
+          },
+          {
+            name: 'lastName',
+            message: 'Enter employees last name:',
+          },
+          {
+            name: 'roleId',
+            type: 'list',
+            message: "Select the employee's role:",
+            choices: roles,
+          },
+          {
+            name: 'managerName',
+            type: 'list',
+            message: 'If applicable, who is the manager of this employee?',
+            choices: managerNames,
+          }
+        ])
+        .then(answer => {
+          const first = answer.firstName;
+          const last = answer.lastName;
+          const role = answer.roleId;
+          const manager = answer.managerName;
+
+          db.query('INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)',
+            [first, last, role, manager],
+            (err, result) => {
+              if (err) throw err;
+              console.log(`${first} ${last} added as an employee.`);
+              callback();
+            }
+          );
+        });
+    });
+  });
+}
+
+function updateEmployeeRole(callback) {
+
+  db.query('SELECT * FROM employees', (err, results) => {
+    if (err) throw err;
+
+    const employees = results
       .map(employee => ({
         name: `${employee.first_name} ${employee.last_name}`,
         value: employee.employee_id
       }));
+    
+    db.query('SELECT * FROM roles', (err, roleResults) => {
+    if (err) throw err;
 
-    inquirer
-     .prompt([
-       {
-         name: 'firstName',
-         message: 'Enter employees first name:',
-         },
-       {
-         name: 'lastName',
-         message: 'Enter employees last name:',
-         },
-       {
-         name: 'roleId',
-         message: 'Enter ID number of the employees role:'
-         },
-       {
-         name: 'managerName',
-         type: 'list',
-         message: 'If applicable, who is the manager of this employee?',
-         choices: managerNames,
-         default: null
-         }
-      ])
-     .then(answer => {
-         const first = answer.firstName;
-         const last = answer.lastName;
-         const role = answer.roleId;
-         const manager = answer.managerName;
+    const roles = roleResults.map(role => ({
+      name: role.title,
+      value: role.role_id
+    }));
+      
 
-        const parsedManagerId = manager === '' ? null : manager;
-
-         db.query('INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)',
-             [first, last, role, parsedManagerId],
-             (err, result) => {
-                if (err) throw err;
-                console.log('Employee added successfully');
-                callback();
-      });
-     });
-     })
-}
-
-function updateEmployeeRole(callback) {
   inquirer
     .prompt([
       {
         name: 'employeeId',
-        message: 'Enter the employees ID number:'
+        type: 'list',
+        message: 'Select an employee to update their role:',
+        choices: employees,
       },
       {
         name: 'newRoleId',
-        message: 'Enter the ID of the employees new role:'
+        type: 'list',
+        message: 'Select the employees new role:',
+        choices: roles,
       }
     ])
     .then(answer => {
@@ -163,10 +197,12 @@ function updateEmployeeRole(callback) {
         [newRole, employee],
         (err, result) => {
           if (err) throw err;
-          console.log('Employee role updated successfully');
+          console.log(`Employee's role has been updated!`);
           callback();
         });
-  }) 
+     }) 
+    });
+  });
 }
 
 
