@@ -30,6 +30,7 @@ To run this program:
 -Respond to the prompts as desired.
 
 ## Link to walkthrough video
+[Walkthrough](https://watch.screencastify.com/v/6F7WtbrBEJnjxEF0PR0L)
  
 ## Screenshots
 This shows the main menu of the application. 
