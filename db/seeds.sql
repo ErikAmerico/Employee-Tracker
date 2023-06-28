@@ -19,6 +19,6 @@ VALUES ("Seth", "Rogan", 1, NULL),
        ("Rosetta", "Stone", 4, 3),
        ("Joe", "Biden", 4, 3),
        ("Lada", "Jarabek", 5, NULL),
-       ("Cory", "Benton", 6, 5),
-       ("Erik", "Olson", 7, 5);
+       ("Cory", "Benton", 6, 6),
+       ("Erik", "Olson", 7, 6);
      
