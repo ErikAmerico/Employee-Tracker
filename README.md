@@ -35,11 +35,11 @@ To run this program:
 ## Screenshots
 This shows the main menu of the application. 
 
-![Menu](assets\menuScreenShot.png)
+![Menu](/assets/menuScreenShot.png)
 
 This shows the result of selecting view all employees.
 
-![View all employees](assets\viewAllEmployeesScreenShot.png)
+![View all employees](/assets/viewAllEmployeesScreenShot.png)
 
 ## Contact
 
